@@ -1,0 +1,72 @@
+body{
+	background-color:	#727072;
+}
+.main-div {
+	float:			center;
+	text-align:		center;
+}
+.game{
+	display:				block;
+	margin:					auto;
+	margin-top:				80px;
+	width:					500px;
+	height:					500px;
+	border-radius:			50%;
+	box-shadow:				0 15px 22px 0 rgba(0,0,0,0.2), 0 15px 25px 0 rgba(0,0,0,0.19);
+	background-color:		#201d1d;
+}
+a.fill-div {
+	color:				inherit;
+	display:			block;
+	height:				100%;
+	width:				100%;
+	text-decoration:	none;
+	cursor:				pointer;
+	border:					20px;
+}
+.circle-container {
+	width:		500px;
+	height:		500px
+}
+.quarter {
+	height:					250px;
+	width:					250px;
+	border:					20px solid #201d1d;
+}
+.top-left {
+	border-top-left-radius:		250px;
+	float:						left;
+}
+.green-btn {
+	background:					#00CB56;
+}
+.top-right {
+	border-top-right-radius:	250px;
+	float:						right;
+}
+.red-btn {
+	background:					#FE000B;
+}
+.bottom-left {
+	border-bottom-left-radius:	250px;
+	float:						left;
+}
+.yellow-btn {
+	background:					#F0C102;
+}
+.bottom-right {
+	border-bottom-right-radius:	250px;
+	float:						right;
+}
+.blue-btn {
+	background:					#0064CC;
+}
+.code-author{
+	text-align:		center;
+	margin-top:		40px;
+	font-family:	"Times New Roman", Times, serif;
+	font-size:		1em;
+}
+.link-no-color {
+	color:				inherit;
+}
