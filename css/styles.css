@@ -22,7 +22,7 @@ a.fill-div {
 	width:				100%;
 	text-decoration:	none;
 	cursor:				pointer;
-	border:				20px;
+	border:				15px;
 }
 .circle-container {
 	width:		500px;
@@ -31,7 +31,7 @@ a.fill-div {
 .quarter {
 	height:					250px;
 	width:					250px;
-	border:					20px solid #201d1d;
+	border:					15px solid #201d1d;
 }
 .top-left {
 	border-top-left-radius:		250px;
@@ -94,8 +94,83 @@ a.fill-div {
 }
 .game-name{
 	font-family:	'Acme', sans-serif;
-	font-size:		2.25em;
+	font-size:		2.15em;
 	text-align:		center;
 	color:			#000000;
-	margin-top:		45px;
+	margin-top:		40px;
+	margin-bottom:	0;
+}
+.control-buttons-div{
+	height:		80px;
+	width:		210px;
+}
+.control-buttons-half{
+	height:		80px;
+	width:		70px;
+}
+.display-div{
+	float:				right;
+	display:			block;
+	width:				60px;
+	height:				50px;
+	background-color:	#95C144;
+	border-style:		solid;
+	border-color:		#738C4B;
+	border-width:		2px;
+	border-radius:		7px;
+	box-shadow:			0 3px 6px 0 rgba(0,0,0,0.2), 0 3px 7px 0 rgba(0,0,0,0.19);
+}
+.display-text{
+	text-align:		center;
+	font-family:	'Share Tech Mono', monospace;
+	color:			#273410;
+	font-size:		2.5em;
+}
+.buttons-text{
+	font-family:	'Acme', sans-serif;
+	font-size:		1em;
+	text-align:		center;
+	color:			#000000;
+	margin:			0;
+}
+.text-margin-left{
+	margin-left:	10px;
+}
+.round-button{
+	display:				block;
+	margin:					auto;
+	width:					25px;
+	height:					25px;
+	border-radius:			50%;
+	border-style:			solid;
+	border-color:			#201d1d;
+	border-width:			4px;
+	box-shadow:				0 3px 6px 0 rgba(0,0,0,0.2), 0 3px 7px 0 rgba(0,0,0,0.19);
+}
+.margin-round-button{
+	margin-top:				25px;
+}
+.start-div{
+	background-color:		#FF0000;
+}
+.strict-div{
+	background-color:		#343420;
+}
+.strict-div-active{
+	background-color:		#ffff00;
+}
+.power-button-half{
+	height:			40px;
+	width:			210px;
+	top:			80px;
+}
+.no-margin-padding{
+	margin:		0;
+	padding:	0;
+}
+.power-switch{
+	background-color:		#243724;
+}
+.power-switch-active{
+	background-color:		#00FF00;
 }
