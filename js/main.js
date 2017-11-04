@@ -4,6 +4,7 @@ $(document).ready(function() {
 	var isGameTurnedOn	= getPowerButtonStatus();
 	var $strictButton	= $("#strict-button-id");
 	var isStrict		= getStrictButtonStatus();
+	var $displayDiv		= $("#display-div-id");
 
 	// Get Status of the power button
 	function getPowerButtonStatus () {
@@ -16,6 +17,15 @@ $(document).ready(function() {
 
 		//Turn off other elements
 		turnOffStrict();
+		turnOffDisplay();
+	}
+
+	function turnOnGame () {
+		$powerButton.removeClass("power-switch");
+		$powerButton.addClass("power-switch-active");
+
+		//Turn on other elements
+		turnOnDisplay();
 	}
 
 	// Power button action
@@ -24,8 +34,7 @@ $(document).ready(function() {
 			turnOffGame();
 		}
 		else {
-			$powerButton.removeClass("power-switch");
-			$powerButton.addClass("power-switch-active");
+			turnOnGame();
 		}
 
 		isGameTurnedOn = !isGameTurnedOn;
@@ -59,4 +68,20 @@ $(document).ready(function() {
 			isStrict = !isStrict;
 		}
 	});
+
+	function turnOnDisplay () {
+		delayAndShow($displayDiv, 150, "--");
+		delayAndShow($displayDiv, 150, "");
+		delayAndShow($displayDiv, 150, "--");
+		delayAndShow($displayDiv, 150, "");
+		delayAndShow($displayDiv, 150, "--");
+	}
+
+	function delayAndShow (component, delay, showTxt) {
+		component.delay(delay).show(1, function () { $displayDiv.html(showTxt); });
+	}
+
+	function turnOffDisplay () {
+		$displayDiv.text("");
+	}
 });
