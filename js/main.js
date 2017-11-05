@@ -8,6 +8,13 @@ $(document).ready(function() {
 	var $startButton	= $("#start-button-id");
 	var isGameStart		= isGameTurnedOn;
 
+	var gameOver			= false;
+	var moveTime			= 600;
+	var positions			= [];
+	var playerPositions		= [];
+
+	var timeOutPlayerMove;
+
 	var _buttons = [
 		{
 			id:			"green-btn-id",
@@ -144,7 +151,7 @@ $(document).ready(function() {
 	}
 
 	function delayAndShow (component, delay, showTxt) {
-		component.delay(delay).show(1, function () { $displayDiv.html(showTxt); });
+		component.delay(delay).show(1, function () { component.html(showTxt); });
 	}
 
 	function turnOffDisplay () {
@@ -156,7 +163,41 @@ $(document).ready(function() {
 		if (isGameTurnedOn) {
 			delayAndShow($displayDiv, 150, "00");
 			isGameStart = true;
-
+			gameStart();
 		}
 	});
+
+	// Start a new game
+	function gameStart () {
+		gameOver			= false;
+		positions			= [];
+		playerPositions		= [];
+		moveTime			= 800;
+
+		setTimeout(function () { randomMove(); }, 500);
+	}
+
+	// Generate a random move for the player to mimic
+	function randomMove () {
+		var randomMove = Math.floor(Math.random() * 4);
+
+		positions.push(randomMove);
+		delayAndShow($displayDiv, 10, formatNumber(positions.length));
+
+		clickColorButtons(randomMove);
+		setTimeout(function () { releaseColorButtons(randomMove); }, moveTime);
+
+		timeOutPlayerMove = setTimeout(function () { playerError(); }, 5000);
+
+		console.log(positions);
+	}
+
+	function formatNumber (number) {
+		var formattedNumber = ("0" + number).slice(-2);
+		return formattedNumber;
+	}
+
+	function playerError () {
+		alert("Player didn't move!");
+	}
 });
