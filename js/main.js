@@ -7,6 +7,7 @@ $(document).ready(function() {
 	var $displayDiv		= $("#display-div-id");
 	var $startButton	= $("#start-button-id");
 	var isGameStart		= isGameTurnedOn;
+	var isPlayerTurn	= false;
 
 	var gameOver			= false;
 	var moveTime			= 600;
@@ -62,15 +63,25 @@ $(document).ready(function() {
 	_buttons.forEach(function (element, index) {
 		// Mouse click starts animation and sound
 		element.selector.on("mousedown", function () {
-			if (isGameTurnedOn && isGameStart) {
-				clickColorButtons(index);
+			if (isGameTurnedOn && isGameStart && isPlayerTurn) {
+				playerPositions.push(index);
+				clearTimeout(timeOutPlayerMove);
+
+				if (checkPlayerSequence()) {
+					clickColorButtons(index);
+				}
+				else {
+					playerError();
+					isPlayerTurn = false;
+				}
 			}
 		});
 
 		// Release mouse ends animation and sound
 		element.selector.on("mouseup", function () {
-			if (isGameTurnedOn && isGameStart) {
+			if (isGameTurnedOn && isGameStart && isPlayerTurn) {
 				var timeOut = setTimeout(function () { releaseColorButtons(index); }, 200);
+				isPlayerTurn = false;
 			}
 		});
 	});
@@ -88,6 +99,7 @@ $(document).ready(function() {
 		turnOffStrict();
 		turnOffDisplay();
 		isGameStart = false;
+		clearTimeout(timeOutPlayerMove);
 	}
 
 	function turnOnGame () {
@@ -161,8 +173,10 @@ $(document).ready(function() {
 	// Start button action
 	$startButton.on("click", function () {
 		if (isGameTurnedOn) {
-			delayAndShow($displayDiv, 150, "00");
 			isGameStart = true;
+			isPlayerTurn = false;
+
+			delayAndShow($displayDiv, 150, "00");
 			gameStart();
 		}
 	});
@@ -174,30 +188,58 @@ $(document).ready(function() {
 		playerPositions		= [];
 		moveTime			= 800;
 
-		setTimeout(function () { randomMove(); }, 500);
+		setTimeout(function () { showSequence(Math.floor(Math.random() * 4)); }, 500);
 	}
 
 	// Generate a random move for the player to mimic
-	function randomMove () {
-		var randomMove = Math.floor(Math.random() * 4);
+	function showSequence (randMove) {
+		if (isGameTurnedOn) {
+			if (randMove >= 0) {
+				positions.push(randMove);
+			}
+			delayAndShow($displayDiv, 10, formatNumber(positions.length));
 
-		positions.push(randomMove);
-		delayAndShow($displayDiv, 10, formatNumber(positions.length));
+			positions.forEach(function (element) {
+				clickColorButtons(element);
+				setTimeout(function () { releaseColorButtons(element); }, moveTime);
+			});
 
-		clickColorButtons(randomMove);
-		setTimeout(function () { releaseColorButtons(randomMove); }, moveTime);
-
-		timeOutPlayerMove = setTimeout(function () { playerError(); }, 5000);
-
-		console.log(positions);
+			isPlayerTurn = true;
+			playerPositions = [];
+			console.log("acabou!");
+			timeOutPlayerMove = setTimeout(playerError, 5000);
+		}
 	}
 
 	function formatNumber (number) {
-		var formattedNumber = ("0" + number).slice(-2);
-		return formattedNumber;
+		return ("0" + number).slice(-2);
 	}
 
 	function playerError () {
-		alert("Player didn't move!");
+		delayAndShow($displayDiv, 150, "XX");
+		delayAndShow($displayDiv, 150, "");
+		delayAndShow($displayDiv, 150, "XX");
+		delayAndShow($displayDiv, 150, "");
+		delayAndShow($displayDiv, 150, "XX");
+
+		if (isStrict){
+			delayAndShow($displayDiv, 150, "00");
+			setTimeout(gameStart, 1500);
+		}
+		else {
+			setTimeout(function () { showSequence(-1); }, 1250);
+		}
+	}
+
+	function checkPlayerSequence () {
+		var result = true;
+
+		playerPositions.forEach(function (value, index) {
+			if (value != positions[index]) {
+				result = false;
+			}
+		});
+
+		return result;
 	}
 });
