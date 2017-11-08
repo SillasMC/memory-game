@@ -10,11 +10,13 @@ $(document).ready(function() {
 	var isPlayerTurn	= false;
 
 	var gameOver			= false;
-	var moveTime			= 600;
+	var moveTime			= 800;
+	var afterMoveTime		= 150;
 	var positions			= [];
 	var playerPositions		= [];
 
 	var timeOutPlayerMove;
+	var timeOutSequence;
 
 	var _buttons = [
 		{
@@ -81,7 +83,13 @@ $(document).ready(function() {
 		element.selector.on("mouseup", function () {
 			if (isGameTurnedOn && isGameStart && isPlayerTurn) {
 				var timeOut = setTimeout(function () { releaseColorButtons(index); }, 200);
-				isPlayerTurn = false;
+				if (playerPositions.length === positions.length) {
+					isPlayerTurn = false;
+					setTimeout(function () { showSequence(Math.floor(Math.random() * 4)); }, 500);
+				}
+				else {
+					timeOutPlayerMove = setTimeout(playerError, 5000);
+				}
 			}
 		});
 	});
@@ -100,6 +108,7 @@ $(document).ready(function() {
 		turnOffDisplay();
 		isGameStart = false;
 		clearTimeout(timeOutPlayerMove);
+		clearTimeout(timeOutSequence);
 	}
 
 	function turnOnGame () {
@@ -172,6 +181,10 @@ $(document).ready(function() {
 
 	// Start button action
 	$startButton.on("click", function () {
+
+		clearTimeout(timeOutPlayerMove);
+		clearTimeout(timeOutSequence);
+
 		if (isGameTurnedOn) {
 			isGameStart = true;
 			isPlayerTurn = false;
@@ -187,6 +200,7 @@ $(document).ready(function() {
 		positions			= [];
 		playerPositions		= [];
 		moveTime			= 800;
+		afterMoveTime		= 150;
 
 		setTimeout(function () { showSequence(Math.floor(Math.random() * 4)); }, 500);
 	}
@@ -199,14 +213,32 @@ $(document).ready(function() {
 			}
 			delayAndShow($displayDiv, 10, formatNumber(positions.length));
 
-			positions.forEach(function (element) {
-				clickColorButtons(element);
-				setTimeout(function () { releaseColorButtons(element); }, moveTime);
+			playSequenceButton(positions, moveTime, afterMoveTime)
+
+		}
+	}
+
+	// Kind of recursive function to play the game sequence
+	function playSequenceButton (arrayPos, delayPress, delayInner) {
+		var index = arrayPos[0];
+
+		_buttons[index].sound.play();
+		_buttons[index].selector.removeClass(_buttons[index].classOff).addClass(_buttons[index].classOn)
+			.delay(delayPress).queue(function (next) {
+				$(this).removeClass(_buttons[index].classOn).addClass(_buttons[index].classOff);
+				next();
 			});
 
+		// TODO Reduzir delayPress com as jogadas
+		// TODO Apagar todas as luzes quando o jogo parar
+		var newArray = arrayPos.slice(1, arrayPos.length);
+		if (newArray instanceof Array && newArray.length > 0) {
+			timeOutSequence = setTimeout(function () { playSequenceButton(newArray, delayPress, delayInner) }, delayPress + delayInner);
+		}
+		else {
 			isPlayerTurn = true;
 			playerPositions = [];
-			console.log("acabou!");
+
 			timeOutPlayerMove = setTimeout(playerError, 5000);
 		}
 	}
@@ -215,6 +247,7 @@ $(document).ready(function() {
 		return ("0" + number).slice(-2);
 	}
 
+	// Player made error in sequence or forgot to press buttons
 	function playerError () {
 		delayAndShow($displayDiv, 150, "XX");
 		delayAndShow($displayDiv, 150, "");
