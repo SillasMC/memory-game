@@ -14,9 +14,12 @@ $(document).ready(function() {
 	var afterMoveTime		= 150;
 	var positions			= [];
 	var playerPositions		= [];
+	var speedUpNumbers		= [5, 9, 13];
+	var winScore			= 20;
 
 	var timeOutPlayerMove;
 	var timeOutSequence;
+	var timeOutGameStart;
 
 	var _buttons = [
 		{
@@ -84,8 +87,13 @@ $(document).ready(function() {
 			if (isGameTurnedOn && isGameStart && isPlayerTurn) {
 				var timeOut = setTimeout(function () { releaseColorButtons(index); }, 200);
 				if (playerPositions.length === positions.length) {
-					isPlayerTurn = false;
-					setTimeout(function () { showSequence(Math.floor(Math.random() * 4)); }, 500);
+					if (positions.length === winScore) {
+						gameOver = true;
+						setTimeout(endGame, 500);
+					} else {
+						isPlayerTurn = false;
+						setTimeout(function () { showSequence(Math.floor(Math.random() * 4)); }, 500);
+					}
 				}
 				else {
 					timeOutPlayerMove = setTimeout(playerError, 5000);
@@ -93,6 +101,20 @@ $(document).ready(function() {
 			}
 		});
 	});
+
+	// Turn off button and clear future actions
+	function turnOffLights () {
+		_buttons.forEach(function (element, index) {
+			releaseColorButtons(index);
+			element.selector.clearQueue();
+		});
+	}
+
+	function turnOnLights () {
+		_buttons.forEach(function (element, index) {
+			clickColorButtons(index);
+		});
+	}
 
 	// Get Status of the power button
 	function getPowerButtonStatus () {
@@ -106,9 +128,11 @@ $(document).ready(function() {
 		//Turn off other elements
 		turnOffStrict();
 		turnOffDisplay();
+		turnOffLights();
 		isGameStart = false;
 		clearTimeout(timeOutPlayerMove);
 		clearTimeout(timeOutSequence);
+		clearTimeout(timeOutGameStart);
 	}
 
 	function turnOnGame () {
@@ -176,33 +200,54 @@ $(document).ready(function() {
 	}
 
 	function turnOffDisplay () {
+		$displayDiv.clearQueue();
 		$displayDiv.text("");
 	}
 
 	// Start button action
 	$startButton.on("click", function () {
 
-		clearTimeout(timeOutPlayerMove);
-		clearTimeout(timeOutSequence);
+		isGameStart = false;
 
 		if (isGameTurnedOn) {
-			isGameStart = true;
-			isPlayerTurn = false;
 
 			delayAndShow($displayDiv, 150, "00");
 			gameStart();
 		}
 	});
 
+	// Show victory and start game again
+	function endGame () {
+		turnOnLights();
+		var times = 20;
+
+		for (var i = 0; i < times; i++) {
+			delayAndShow($displayDiv, 150, "");
+			delayAndShow($displayDiv, 150, formatNumber(winScore));
+		}
+
+		timeOutGameStart = setTimeout(gameStart, times * 300);
+	}
+
 	// Start a new game
 	function gameStart () {
+
+		turnOffDisplay();
+		turnOffLights();
+
+		clearTimeout(timeOutPlayerMove);
+		clearTimeout(timeOutSequence);
+		clearTimeout(timeOutGameStart);
+
+		isGameStart			= true;
+		isPlayerTurn		= false;
 		gameOver			= false;
 		positions			= [];
 		playerPositions		= [];
 		moveTime			= 800;
 		afterMoveTime		= 150;
 
-		setTimeout(function () { showSequence(Math.floor(Math.random() * 4)); }, 500);
+		timeOutGameStart = setTimeout(function () { showSequence(Math.floor(Math.random() * 4)); }, 500);
 	}
 
 	// Generate a random move for the player to mimic
@@ -212,6 +257,11 @@ $(document).ready(function() {
 				positions.push(randMove);
 			}
 			delayAndShow($displayDiv, 10, formatNumber(positions.length));
+
+			// Speed up the game
+			if (speedUpNumbers.indexOf(positions.length) >= 0) {
+				moveTime -= 200;
+			}
 
 			playSequenceButton(positions, moveTime, afterMoveTime)
 
@@ -229,8 +279,6 @@ $(document).ready(function() {
 				next();
 			});
 
-		// TODO Reduzir delayPress com as jogadas
-		// TODO Apagar todas as luzes quando o jogo parar
 		var newArray = arrayPos.slice(1, arrayPos.length);
 		if (newArray instanceof Array && newArray.length > 0) {
 			timeOutSequence = setTimeout(function () { playSequenceButton(newArray, delayPress, delayInner) }, delayPress + delayInner);
@@ -249,11 +297,10 @@ $(document).ready(function() {
 
 	// Player made error in sequence or forgot to press buttons
 	function playerError () {
-		delayAndShow($displayDiv, 150, "XX");
-		delayAndShow($displayDiv, 150, "");
-		delayAndShow($displayDiv, 150, "XX");
-		delayAndShow($displayDiv, 150, "");
-		delayAndShow($displayDiv, 150, "XX");
+		for (var i = 0; i < 3; i++) {
+			delayAndShow($displayDiv, 150, "");
+			delayAndShow($displayDiv, 150, "XX");
+		}
 
 		if (isStrict){
 			delayAndShow($displayDiv, 150, "00");
